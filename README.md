@@ -1,3 +1,3 @@
 # Community Waste Management
 
-Live demo: https://cwm-topaz.vercel.app/
+Live Website: https://cwm-topaz.vercel.app/
