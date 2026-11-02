@@ -86,6 +86,7 @@ a{color:var(--pl);font-weight:600;text-decoration:none}a:hover{text-decoration:u
 <div class="fg"><label>Waste Type</label><select id="rType" class="fc" required><option value="">Select waste type</option><option value="recyclable">Recyclable (plastic, paper, glass)</option><option value="hazardous">Hazardous (chemicals, batteries)</option><option value="organic">Organic (food, garden waste)</option><option value="electronic">Electronic Waste</option><option value="general">General Waste</option></select></div>
 <div class="fg"><label>Location</label><input id="rLoc" class="fc" placeholder="e.g., Near Central Park" required></div>
 <div class="fg"><label>Description</label><textarea id="rDesc" class="fc" rows="4" placeholder="Details about the waste issue..." required></textarea></div>
+<div class="fg"><label><i class="fas fa-camera"></i> Photo (optional)</label><input id="rPhoto" type="file" accept="image/*" class="fc" onchange="pickPhoto(this)"><img id="rPrev" alt="Preview" style="display:none;max-width:100%;max-height:200px;border-radius:10px;margin-top:10px"></div>
 <div class="fg"><label>Priority</label><select id="rPri" class="fc"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option><option value="critical">Critical</option></select></div>
 <div style="display:flex;justify-content:flex-end;gap:10px"><button type="button" class="btn b2" onclick="closeModal()">Cancel</button><button class="btn b1"><i class="fas fa-paper-plane"></i> Submit Report</button></div>
 </form></div></div></div>
@@ -107,7 +108,7 @@ a{color:var(--pl);font-weight:600;text-decoration:none}a:hover{text-decoration:u
 <script>
 const $=id=>document.getElementById(id);
 const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
-const S=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const S=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const now=()=>new Date().toISOString();
 const COLORS=['#1a5fb4','#26a269','#e5a50a','#c01c28','#9141ac','#1c71d8'];
@@ -127,11 +128,15 @@ function comments(){let c=L('cwm_comments',null);if(!c){c=[
 
 let cur=L('cwm_currentUser',null),rid=null,page='dash';
 const isStaff=()=>cur&&(cur.role==='admin'||cur.role==='staff');
+const canSee=r=>r.photo&&(isStaff()||r.authorId===cur.id);
 const cc=id=>comments().filter(c=>c.reportId===id).length;
 const colorOf=id=>(users().find(u=>u.id===id)||{}).avatarColor||'#64748b';
 
 function toast(t,m,err){const e=$('toast');$('tT').textContent=t;$('tM').textContent=m;e.className='toast'+(err?' err':'');e.querySelector('i').className=err?'fas fa-exclamation-circle':'fas fa-check-circle';e.style.display='flex';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',3000)}
 function closeModal(){document.querySelectorAll('.modal').forEach(m=>m.style.display='none')}
+let photoData='';
+function pickPhoto(inp){const f=inp.files[0];photoData='';$('rPrev').style.display='none';if(!f)return;if(!f.type.startsWith('image/')){inp.value='';return toast('Error','Please choose an image file',1)}
+ const img=new Image(),rd=new FileReader();rd.onload=()=>{img.onload=()=>{const k=Math.min(1,800/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);photoData=c.toDataURL('image/jpeg',.7);$('rPrev').src=photoData;$('rPrev').style.display='block'};img.onerror=()=>toast('Error','Could not read that image',1);img.src=rd.result};rd.readAsDataURL(f)}
 function saveDraft(){S('cwm_draft',{t:$('rTitle').value,ty:$('rType').value,lo:$('rLoc').value,d:$('rDesc').value,pr:$('rPri').value})}
 function openReportModal(){const d=L('cwm_draft',null);if(d){$('rTitle').value=d.t||'';$('rType').value=d.ty||'';$('rLoc').value=d.lo||'';$('rDesc').value=d.d||'';$('rPri').value=d.pr||'medium'}$('reportModal').style.display='flex'}
 
@@ -180,7 +185,7 @@ function card(r,full){
  const pr=`<span class="tag p-${r.priority}">${r.priority}</span>`;
  return `<div class="rc" data-type="${r.type}" data-status="${r.status}" data-text="${esc((r.title+' '+r.description+' '+r.location+' '+r.authorName).toLowerCase())}" onclick="viewReport(${r.id})">
 <div class="rh"><span class="tag t-${r.type}">${r.type}</span><span class="tag s-${r.status}">${r.status}</span></div>
-<div class="rb"><h3>${esc(r.title)}</h3><p>${esc(full?r.description:r.description.slice(0,110)+(r.description.length>110?'...':''))}</p>
+${canSee(r)?`<img src="${esc(r.photo)}" alt="Report photo" style="width:100%;height:170px;object-fit:cover;display:block">`:''}<div class="rb"><h3>${esc(r.title)}</h3><p>${esc(full?r.description:r.description.slice(0,110)+(r.description.length>110?'...':''))}</p>
 <div class="loc"><i class="fas fa-map-marker-alt"></i><span>${esc(r.location)}</span></div>
 <div class="loc">${pr}<span><i class="fas fa-calendar"></i> ${esc(r.date)}</span></div></div>
 <div class="rf"><div class="au"><div class="av" style="background:${colorOf(r.authorId)}">${esc(r.authorName[0])}</div><div><strong>${esc(r.authorName)}</strong></div></div>
@@ -227,8 +232,8 @@ ${u.map(x=>`<tr><td>${x.id}</td><td><div style="display:flex;align-items:center;
 function refresh(){go(page)}
 function submitReport(){const t=$('rTitle').value.trim(),ty=$('rType').value,lo=$('rLoc').value.trim(),d=$('rDesc').value.trim();
  if(!t||!ty||!lo||!d)return toast('Error','Please fill in all required fields',1);
- const r=reports();r.unshift({id:Math.max(0,...r.map(x=>x.id))+1,title:t,description:d,type:ty,location:lo,authorId:cur.id,authorName:cur.fullName,status:'pending',priority:$('rPri').value,date:new Date().toISOString().slice(0,10),upvotes:0,comments:0});
- S('cwm_reports',r);localStorage.removeItem('cwm_draft');$('reportForm').reset();closeModal();go('dash');toast('Success','Report submitted successfully!')}
+ const r=reports();r.unshift({id:Math.max(0,...r.map(x=>x.id))+1,title:t,description:d,type:ty,location:lo,authorId:cur.id,authorName:cur.fullName,status:'pending',priority:$('rPri').value,date:new Date().toISOString().slice(0,10),upvotes:0,comments:0,photo:photoData});
+ if(!S('cwm_reports',r))return toast('Error','Storage is full. Try a smaller photo.',1);localStorage.removeItem('cwm_draft');$('reportForm').reset();photoData='';$('rPrev').style.display='none';closeModal();go('dash');toast('Success','Report submitted successfully!')}
 function upvote(id){const r=reports(),x=r.find(y=>y.id===id);if(!x)return;x.upvotes++;S('cwm_reports',r);refresh();toast('Success','Report upvoted!')}
 function setStatus(id,s){if(!isStaff()||!confirm(`Change this report status to "${s}"?`))return;const r=reports(),x=r.find(y=>y.id===id);if(!x)return;x.status=s;S('cwm_reports',r);refresh();toast('Success','Report marked as '+s)}
 function delReport(id){if(cur.role!=='admin'||!confirm('Delete this report?'))return;S('cwm_reports',reports().filter(x=>x.id!==id));S('cwm_comments',comments().filter(c=>c.reportId!==id));refresh();toast('Success','Report deleted')}
@@ -238,6 +243,7 @@ function delUser(id){if(cur.role!=='admin'||id===cur.id||!confirm('Delete this u
 function viewReport(id){const r=reports().find(x=>x.id===id);if(!r)return toast('Error','Report not found',1);rid=id;
  $('detail').innerHTML=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><span class="tag t-${r.type}">${r.type}</span><span class="tag s-${r.status}">${r.status}</span><span class="tag p-${r.priority}">${r.priority}</span></div>
 <h3 style="margin-bottom:14px">${esc(r.title)}</h3>
+${canSee(r)?`<img src="${esc(r.photo)}" alt="Report photo" style="width:100%;max-height:320px;object-fit:contain;background:#0e1624;border-radius:12px;margin-bottom:14px">`:''}
 <div class="box"><h5><i class="fas fa-map-marker-alt"></i> Location</h5>${esc(r.location)}</div>
 <div class="box"><h5><i class="fas fa-file-alt"></i> Description</h5>${esc(r.description)}</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px"><div class="box"><h5><i class="fas fa-user"></i> Reported By</h5><b>${esc(r.authorName)}</b></div><div class="box"><h5><i class="fas fa-calendar"></i> Date</h5><b>${esc(r.date)}</b></div>
