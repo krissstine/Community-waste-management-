@@ -1,0 +1,2295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Waste Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-dark: #1b5e20;
+            --primary-light: #4caf50;
+            --secondary: #ff9800;
+            --dark: #333;
+            --light: #f5f5f5;
+            --gray: #e0e0e0;
+            --danger: #d32f2f;
+            --success: #388e3c;
+            --warning: #f57c00;
+            --info: #1976d2;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo i {
+            font-size: 2.2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        nav a.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .user-badge:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Main Content */
+        main {
+            padding: 30px 0;
+            min-height: calc(100vh - 140px);
+        }
+
+        .content-header {
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .content-header h1 {
+            font-size: 2.2rem;
+            color: var(--dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content-header p {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            color: var(--dark);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e1e1;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success) 0%, #4caf50 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #2e7d32 0%, var(--success) 100%);
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning) 0%, #ff9800 100%);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #e65100 0%, var(--warning) 100%);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger) 0%, #f44336 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #b71c1c 0%, var(--danger) 100%);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 8px;
+        }
+
+        /* Table Styles */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid #e1e1e1;
+            background: white;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: var(--light);
+            color: var(--dark);
+            font-weight: 600;
+            padding: 16px;
+            text-align: left;
+            border-bottom: 2px solid #e1e1e1;
+        }
+
+        .table td {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.2s ease;
+        }
+
+        .table tr:hover td {
+            background: #f8f9fa;
+        }
+
+        .table tr {
+            animation: fadeInRow 0.5s ease-out;
+        }
+
+        @keyframes fadeInRow {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Status Badges */
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .badge-pending {
+            background: linear-gradient(135deg, #ffd166, #ffb347);
+            color: #7c5900;
+        }
+
+        .badge-in-progress {
+            background: linear-gradient(135deg, #118ab2, #06d6a0);
+            color: white;
+        }
+
+        .badge-resolved {
+            background: linear-gradient(135deg, #06d6a0, #0cb259);
+            color: white;
+        }
+
+        .badge-critical {
+            background: linear-gradient(135deg, #f03e3e, #fa5252);
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-card i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideUp 0.4s ease-out;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        @keyframes modalSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 2px solid var(--light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--light);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin: 0;
+        }
+
+        .modal-header button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+            transition: color 0.3s;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .modal-header button:hover {
+            color: var(--danger);
+            background: rgba(192, 28, 40, 0.1);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 2px solid var(--light);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            background: var(--light);
+            border-radius: 0 0 20px 20px;
+        }
+
+        /* Comment Section */
+        .comment-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid var(--light);
+        }
+
+        .comment-form {
+            margin-bottom: 30px;
+        }
+
+        .comment-form textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--gray);
+            border-radius: 8px;
+            resize: vertical;
+            min-height: 100px;
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+
+        .comment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .comment-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid var(--gray);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--light);
+        }
+
+        .comment-author {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .comment-time {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .comment-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .comment-actions button {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .comment-actions button:hover {
+            color: var(--primary);
+        }
+
+        .comment-content {
+            color: var(--dark);
+            line-height: 1.5;
+        }
+
+        /* Auth Pages */
+        .auth-container {
+            max-width: 440px;
+            margin: 60px auto;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .auth-card {
+            background: white;
+            border-radius: 24px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .auth-header h2 {
+            color: var(--dark);
+            margin-bottom: 15px;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .auth-header p {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 2px solid var(--light);
+            color: var(--gray);
+        }
+
+        .auth-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .auth-footer a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 3000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 400px;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-success {
+            border-left: 5px solid var(--success);
+        }
+
+        .toast-error {
+            border-left: 5px solid var(--danger);
+        }
+
+        .toast-info {
+            border-left: 5px solid var(--info);
+        }
+
+        .toast i {
+            font-size: 1.5rem;
+        }
+
+        .toast-success i {
+            color: var(--success);
+        }
+
+        .toast-error i {
+            color: var(--danger);
+        }
+
+        .toast-info i {
+            color: var(--info);
+        }
+
+        /* Report Cards */
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .report-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--gray);
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .report-header {
+            padding: 15px;
+            background: var(--light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .report-type {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: white;
+        }
+
+        .type-recyclable { background: var(--primary); }
+        .type-hazardous { background: var(--danger); }
+        .type-organic { background: var(--success); }
+        .type-electronic { background: var(--info); }
+        .type-general { background: var(--warning); }
+
+        .report-body {
+            padding: 15px;
+        }
+
+        .report-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .report-description {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .report-footer {
+            padding: 12px 15px;
+            background: #fafafa;
+            border-top: 1px solid var(--gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .report-author {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .author-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #bbdefb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .report-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(46, 125, 50, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .reports-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 20px;
+                padding: 15px 0;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+                width: 100%;
+            }
+            
+            .dashboard-grid, .reports-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-responsive {
+                font-size: 14px;
+            }
+            
+            .auth-card {
+                padding: 30px;
+            }
+            
+            .modal-content {
+                width: 95%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 20px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+            
+            .stat-card {
+                padding: 20px;
+            }
+            
+            .stat-value {
+                font-size: 2rem;
+            }
+            
+            .auth-card {
+                padding: 25px;
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        /* Search and Filter */
+        .search-filter {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .search-box input {
+            padding-left: 45px;
+        }
+
+        .filter-select {
+            min-width: 200px;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header (will be populated by JavaScript) -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <i class="fas fa-recycle"></i>
+                <span>CommunityCleanUp</span>
+            </div>
+            <nav id="mainNav">
+                <!-- Navigation will be populated by JavaScript -->
+            </nav>
+            <div class="user-info" id="userInfo">
+                <!-- User info will be populated by JavaScript -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+        <div class="container">
+            <div id="content">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <div id="reportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus-circle"></i> Report Waste Issue</h3>
+                <button onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="reportForm" onsubmit="event.preventDefault(); submitReport();">
+                    <div class="form-group">
+                        <label for="reportTitle"><i class="fas fa-heading"></i> Issue Title</label>
+                        <input type="text" id="reportTitle" class="form-control" placeholder="e.g., Overflowing bins on Main Street" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reportType"><i class="fas fa-tag"></i> Waste Type</label>
+                        <select id="reportType" class="form-control" required>
+                            <option value="">Select waste type</option>
+                            <option value="recyclable">Recyclable (plastic, paper, glass)</option>
+                            <option value="hazardous">Hazardous (chemicals, batteries)</option>
+                            <option value="organic">Organic (food waste, garden waste)</option>
+                            <option value="electronic">Electronic Waste</option>
+                            <option value="general">General Waste</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="reportLocation"><i class="fas fa-map-marker-alt"></i> Location</label>
+                        <input type="text" id="reportLocation" class="form-control" placeholder="e.g., Near Central Park, Downtown" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reportDescription"><i class="fas fa-align-left"></i> Description</label>
+                        <textarea id="reportDescription" class="form-control" rows="4" placeholder="Please provide details about the waste issue..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="reportPriority"><i class="fas fa-exclamation-circle"></i> Priority</label>
+                        <select id="reportPriority" class="form-control">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Submit Report
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comment Modal -->
+    <div id="commentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-comments"></i> Comments</h3>
+                <button onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="comment-section">
+                    <div class="comment-form">
+                        <textarea id="commentText" placeholder="Add your comment..."></textarea>
+                        <button class="btn btn-primary" onclick="addComment()">
+                            <i class="fas fa-paper-plane"></i> Post Comment
+                        </button>
+                    </div>
+                    <div class="comment-list" id="commentList">
+                        <!-- Comments will be loaded here -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Details Modal -->
+    <div id="reportDetailsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-file-alt"></i> Report Details</h3>
+                <button onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="reportDetailsContent">
+                <!-- Report details will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal()">Close</button>
+                <button class="btn btn-primary" onclick="openCommentModal()">
+                    <i class="fas fa-comment"></i> View Comments
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" style="display: none;">
+        <i class="fas fa-check-circle"></i>
+        <div>
+            <strong id="toastTitle">Success</strong>
+            <div id="toastMessage">Operation completed successfully</div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== DATA STORAGE ====================
+        // Using localStorage to simulate database
+        class Database {
+            static getUsers() {
+                const users = JSON.parse(localStorage.getItem('cwm_users')) || [];
+                // Add default admin user if no users exist
+                if (users.length === 0) {
+                    const defaultUsers = [
+                        {
+                            id: 1,
+                            fullName: 'Admin User',
+                            email: 'admin@cwm.com',
+                            password: '123456', // In real app, this would be hashed
+                            role: 'admin',
+                            avatarColor: '#1a5fb4',
+                            joinDate: new Date().toISOString()
+                        },
+                        {
+                            id: 2,
+                            fullName: 'John Resident',
+                            email: 'john@example.com',
+                            password: '123456',
+                            role: 'resident',
+                            avatarColor: '#26a269',
+                            joinDate: new Date().toISOString()
+                        },
+                        {
+                            id: 3,
+                            fullName: 'Sarah Staff',
+                            email: 'sarah@example.com',
+                            password: '123456',
+                            role: 'staff',
+                            avatarColor: '#e5a50a',
+                            joinDate: new Date().toISOString()
+                        }
+                    ];
+                    localStorage.setItem('cwm_users', JSON.stringify(defaultUsers));
+                    return defaultUsers;
+                }
+                return users;
+            }
+
+            static saveUsers(users) {
+                localStorage.setItem('cwm_users', JSON.stringify(users));
+            }
+
+            static getReports() {
+                const reports = JSON.parse(localStorage.getItem('cwm_reports')) || [];
+                // Add sample reports if none exist
+                if (reports.length === 0) {
+                    const sampleReports = [
+                        {
+                            id: 1,
+                            title: "Overflowing Recycling Bins at Central Park",
+                            description: "The recycling bins near the playground have been overflowing for two days. Need urgent attention.",
+                            type: "recyclable",
+                            location: "Central Park, Downtown",
+                            authorId: 2,
+                            authorName: "John Resident",
+                            status: "pending",
+                            priority: "high",
+                            date: "2023-10-15",
+                            upvotes: 12,
+                            comments: 5
+                        },
+                        {
+                            id: 2,
+                            title: "Illegal Dumping of Construction Waste",
+                            description: "Someone dumped construction materials in the alley behind 5th Street. Includes hazardous materials.",
+                            type: "hazardous",
+                            location: "Alley behind 5th Street",
+                            authorId: 2,
+                            authorName: "John Resident",
+                            status: "in-progress",
+                            priority: "critical",
+                            date: "2023-10-14",
+                            upvotes: 8,
+                            comments: 3
+                        },
+                        {
+                            id: 3,
+                            title: "Food Waste Accumulation Near Market",
+                            description: "Organic waste from the market is piling up and attracting pests. Needs proper composting setup.",
+                            type: "organic",
+                            location: "Farmers Market Area",
+                            authorId: 2,
+                            authorName: "John Resident",
+                            status: "resolved",
+                            priority: "medium",
+                            date: "2023-10-13",
+                            upvotes: 15,
+                            comments: 7
+                        }
+                    ];
+                    localStorage.setItem('cwm_reports', JSON.stringify(sampleReports));
+                    return sampleReports;
+                }
+                return reports;
+            }
+
+            static saveReports(reports) {
+                localStorage.setItem('cwm_reports', JSON.stringify(reports));
+            }
+
+            static getComments() {
+                const comments = JSON.parse(localStorage.getItem('cwm_comments')) || [];
+                // Add sample comments if none exist
+                if (comments.length === 0) {
+                    const sampleComments = [
+                        {
+                            id: 1,
+                            reportId: 1,
+                            userId: 2,
+                            userName: "John Resident",
+                            content: "This has been here for days! I reported it yesterday too.",
+                            timestamp: "2023-10-15T14:30:00",
+                            likes: 3
+                        },
+                        {
+                            id: 2,
+                            reportId: 1,
+                            userId: 3,
+                            userName: "Sarah Staff",
+                            content: "I'll contact the local authorities about this.",
+                            timestamp: "2023-10-15T15:30:00",
+                            likes: 1
+                        },
+                        {
+                            id: 3,
+                            reportId: 2,
+                            userId: 1,
+                            userName: "Admin User",
+                            content: "Assigned to cleanup crew. Will be resolved within 24 hours.",
+                            timestamp: "2023-10-14T10:15:00",
+                            likes: 5
+                        }
+                    ];
+                    localStorage.setItem('cwm_comments', JSON.stringify(sampleComments));
+                    return sampleComments;
+                }
+                return comments;
+            }
+
+            static saveComments(comments) {
+                localStorage.setItem('cwm_comments', JSON.stringify(comments));
+            }
+
+            static getCurrentUser() {
+                return JSON.parse(localStorage.getItem('cwm_currentUser')) || null;
+            }
+
+            static setCurrentUser(user) {
+                localStorage.setItem('cwm_currentUser', JSON.stringify(user));
+            }
+
+            static clearCurrentUser() {
+                localStorage.removeItem('cwm_currentUser');
+            }
+        }
+
+        // ==================== STATE MANAGEMENT ====================
+        class StateManager {
+            constructor() {
+                this.currentUser = Database.getCurrentUser();
+                this.currentReportId = null;
+                this.init();
+            }
+
+            init() {
+                this.renderHeader();
+                this.loadContent();
+            }
+
+            renderHeader() {
+                const nav = document.getElementById('mainNav');
+                const userInfo = document.getElementById('userInfo');
+
+                if (this.currentUser) {
+                    // Navigation for logged in users
+                    nav.innerHTML = `
+                        <ul>
+                            <li><a href="#" class="active" onclick="state.loadDashboard()"><i class="fas fa-home"></i> Dashboard</a></li>
+                            ${this.currentUser.role === 'resident' ? `
+                            <li><a href="#" onclick="openReportModal()"><i class="fas fa-plus-circle"></i> New Report</a></li>
+                            <li><a href="#" onclick="state.loadMyReports()"><i class="fas fa-file-alt"></i> My Reports</a></li>
+                            ` : ''}
+                            ${this.currentUser.role === 'admin' || this.currentUser.role === 'staff' ? `
+                            <li><a href="#" onclick="state.loadAllReports()"><i class="fas fa-list"></i> All Reports</a></li>
+                            ` : ''}
+                            ${this.currentUser.role === 'admin' ? `
+                            <li><a href="#" onclick="state.loadUsers()"><i class="fas fa-users"></i> Users</a></li>
+                            ` : ''}
+                        </ul>
+                    `;
+
+                    // User info
+                    userInfo.innerHTML = `
+                        <div class="user-badge">
+                            <div style="width: 32px; height: 32px; border-radius: 50%; background: ${this.currentUser.avatarColor}; 
+                                display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                                ${this.currentUser.fullName.charAt(0)}
+                            </div>
+                            <div>
+                                <div style="font-weight: 600;">${this.currentUser.fullName}</div>
+                                <div style="font-size: 0.8rem; opacity: 0.8;">${this.currentUser.role}</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-danger btn-sm" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    `;
+                } else {
+                    // Navigation for guests
+                    nav.innerHTML = '';
+                    userInfo.innerHTML = `
+                        <button class="btn btn-outline" onclick="showLoginForm()" style="color: white; border-color: white;">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                        <button class="btn btn-primary" onclick="showRegisterForm()">
+                            <i class="fas fa-user-plus"></i> Register
+                        </button>
+                    `;
+                }
+            }
+
+            loadContent() {
+                const content = document.getElementById('content');
+                if (this.currentUser) {
+                    this.loadDashboard();
+                } else {
+                    this.showAuthPage();
+                }
+            }
+
+            showAuthPage() {
+                const content = document.getElementById('content');
+                content.innerHTML = `
+                    <div class="auth-container">
+                        <div class="auth-card" id="loginCard">
+                            <div class="auth-header">
+                                <h2>Welcome Back</h2>
+                                <p>Sign in to your account</p>
+                            </div>
+                            <form id="loginForm" onsubmit="event.preventDefault(); login();">
+                                <div class="form-group">
+                                    <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
+                                    <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password"><i class="fas fa-lock"></i> Password</label>
+                                    <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
+                                    <div style="margin-top: 5px; font-size: 0.85rem; color: var(--gray);">
+                                        <i class="fas fa-info-circle"></i> Default: admin@cwm.com / 123456
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary" style="width:100%; margin-top: 20px;">
+                                    <i class="fas fa-sign-in-alt"></i> Sign In
+                                </button>
+                            </form>
+                            <div class="auth-footer">
+                                <p>Don't have an account? <a href="#" onclick="showRegisterForm()">Register here</a></p>
+                            </div>
+                        </div>
+                        <div id="registerCard" class="auth-card" style="display:none;">
+                            <div class="auth-header">
+                                <h2>Create Account</h2>
+                                <p>Join our community</p>
+                            </div>
+                            <form id="registerForm" onsubmit="event.preventDefault(); register();">
+                                <div class="form-group">
+                                    <label for="regName"><i class="fas fa-user"></i> Full Name</label>
+                                    <input type="text" id="regName" class="form-control" placeholder="Enter your full name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="regEmail"><i class="fas fa-envelope"></i> Email Address</label>
+                                    <input type="email" id="regEmail" class="form-control" placeholder="Enter your email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="regPassword"><i class="fas fa-lock"></i> Password</label>
+                                    <input type="password" id="regPassword" class="form-control" placeholder="Create a password" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="regRole"><i class="fas fa-user-tag"></i> Account Type</label>
+                                    <select id="regRole" class="form-control">
+                                        <option value="resident">Resident</option>
+                                        <option value="staff">Staff Member</option>
+                                        <option value="admin">Administrator</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary" style="width:100%; margin-top: 20px;">
+                                    <i class="fas fa-user-plus"></i> Create Account
+                                </button>
+                            </form>
+                            <div class="auth-footer">
+                                <p>Already have an account? <a href="#" onclick="showLoginForm()">Sign in here</a></p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            loadDashboard() {
+                const content = document.getElementById('content');
+                const reports = Database.getReports();
+                const users = Database.getUsers();
+                
+                // Calculate statistics
+                const totalReports = reports.length;
+                const pendingReports = reports.filter(r => r.status === 'pending').length;
+                const progressReports = reports.filter(r => r.status === 'in-progress').length;
+                const resolvedReports = reports.filter(r => r.status === 'resolved').length;
+                const totalUsers = users.length;
+
+                content.innerHTML = `
+                    <div class="animate__animated animate__fadeIn">
+                        <div class="content-header">
+                            <h1><i class="fas fa-tachometer-alt"></i> Dashboard Overview</h1>
+                            <p>Welcome back, ${this.currentUser.fullName}! Here's what's happening in your community.</p>
+                        </div>
+                        
+                        <div class="dashboard-grid">
+                            <div class="stat-card">
+                                <i class="fas fa-flag"></i>
+                                <div class="stat-value">${totalReports}</div>
+                                <div class="stat-label">Total Reports</div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-clock"></i>
+                                <div class="stat-value">${pendingReports}</div>
+                                <div class="stat-label">Pending</div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-spinner"></i>
+                                <div class="stat-value">${progressReports}</div>
+                                <div class="stat-label">In Progress</div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-check-circle"></i>
+                                <div class="stat-value">${resolvedReports}</div>
+                                <div class="stat-label">Resolved</div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title"><i class="fas fa-history"></i> Recent Reports</h2>
+                                <button class="btn btn-primary" onclick="state.loadAllReports()">
+                                    <i class="fas fa-eye"></i> View All
+                                </button>
+                            </div>
+                            <div class="reports-grid">
+                                ${reports.slice(0, 4).map(report => `
+                                    <div class="report-card" onclick="viewReportDetails(${report.id})">
+                                        <div class="report-header">
+                                            <span class="report-type type-${report.type}">${report.type}</span>
+                                            <span class="badge badge-${report.status}">${report.status}</span>
+                                        </div>
+                                        <div class="report-body">
+                                            <h3 class="report-title">${report.title}</h3>
+                                            <p class="report-description">${report.description.substring(0, 100)}...</p>
+                                            <div style="display: flex; align-items: center; gap: 8px; color: #777; font-size: 0.9rem; margin-top: 10px;">
+                                                <i class="fas fa-map-marker-alt"></i>
+                                                <span>${report.location}</span>
+                                            </div>
+                                        </div>
+                                        <div class="report-footer">
+                                            <div class="report-author">
+                                                <div class="author-avatar" style="background: ${getUserColor(report.authorId)};">
+                                                    ${report.authorName.charAt(0)}
+                                                </div>
+                                                <div>
+                                                    <div><strong>${report.authorName}</strong></div>
+                                                    <div>${report.date}</div>
+                                                </div>
+                                            </div>
+                                            <div class="report-actions">
+                                                <button class="btn btn-sm" onclick="event.stopPropagation(); upvoteReport(${report.id})">
+                                                    <i class="fas fa-thumbs-up"></i> ${report.upvotes}
+                                                </button>
+                                                <button class="btn btn-sm" onclick="event.stopPropagation(); openCommentModal(${report.id})">
+                                                    <i class="fas fa-comment"></i> ${report.comments}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        ${this.currentUser.role === 'admin' ? `
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title"><i class="fas fa-chart-bar"></i> Community Statistics</h2>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 20px;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2.5rem; font-weight: bold; color: var(--primary);">${totalUsers}</div>
+                                    <div style="color: var(--gray);">Total Users</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2.5rem; font-weight: bold; color: var(--success);">${resolvedReports}</div>
+                                    <div style="color: var(--gray);">Issues Resolved</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2.5rem; font-weight: bold; color: var(--warning);">${pendingReports}</div>
+                                    <div style="color: var(--gray);">Active Issues</div>
+                                </div>
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
+            loadAllReports() {
+                const content = document.getElementById('content');
+                const reports = Database.getReports();
+                
+                content.innerHTML = `
+                    <div class="animate__animated animate__fadeIn">
+                        <div class="content-header">
+                            <h1><i class="fas fa-list"></i> All Community Reports</h1>
+                            <p>Browse and manage waste reports from the community</p>
+                        </div>
+                        
+                        <div class="search-filter">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="reportSearch" class="form-control" placeholder="Search reports..." 
+                                       onkeyup="searchReports()">
+                            </div>
+                            <select id="reportTypeFilter" class="form-control filter-select" onchange="filterReports()">
+                                <option value="">All Types</option>
+                                <option value="recyclable">Recyclable</option>
+                                <option value="hazardous">Hazardous</option>
+                                <option value="organic">Organic</option>
+                                <option value="electronic">Electronic</option>
+                                <option value="general">General</option>
+                            </select>
+                            <select id="reportStatusFilter" class="form-control filter-select" onchange="filterReports()">
+                                <option value="">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="in-progress">In Progress</option>
+                                <option value="resolved">Resolved</option>
+                            </select>
+                            ${this.currentUser.role === 'resident' ? `
+                            <button class="btn btn-primary" onclick="openReportModal()">
+                                <i class="fas fa-plus"></i> New Report
+                            </button>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="reports-grid" id="reportsGrid">
+                            ${reports.map(report => `
+                                <div class="report-card">
+                                    <div class="report-header">
+                                        <span class="report-type type-${report.type}">${report.type}</span>
+                                        <span class="badge badge-${report.status}">${report.status}</span>
+                                    </div>
+                                    <div class="report-body">
+                                        <h3 class="report-title">${report.title}</h3>
+                                        <p class="report-description">${report.description.substring(0, 150)}...</p>
+                                        <div style="display: flex; align-items: center; gap: 8px; color: #777; font-size: 0.9rem; margin-top: 10px;">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <span>${report.location}</span>
+                                        </div>
+                                        <div style="margin-top: 15px; display: flex; align-items: center; gap: 10px;">
+                                            <span class="badge" style="background: ${report.priority === 'critical' ? 'var(--danger)' : 
+                                                report.priority === 'high' ? 'var(--warning)' : 
+                                                report.priority === 'medium' ? 'var(--info)' : 'var(--gray)'}; color: white;">
+                                                ${report.priority}
+                                            </span>
+                                            <span style="font-size: 0.9rem; color: var(--gray);">
+                                                <i class="fas fa-calendar"></i> ${report.date}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="report-footer">
+                                        <div class="report-author">
+                                            <div class="author-avatar" style="background: ${getUserColor(report.authorId)};">
+                                                ${report.authorName.charAt(0)}
+                                            </div>
+                                            <div>
+                                                <div><strong>${report.authorName}</strong></div>
+                                                <div>Reported by</div>
+                                            </div>
+                                        </div>
+                                        <div class="report-actions">
+                                            <button class="btn btn-sm btn-info" onclick="viewReportDetails(${report.id})" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-success" onclick="openCommentModal(${report.id})" title="Comments">
+                                                <i class="fas fa-comment"></i> ${report.comments}
+                                            </button>
+                                            <button class="btn btn-sm" onclick="upvoteReport(${report.id})" title="Upvote">
+                                                <i class="fas fa-thumbs-up"></i> ${report.upvotes}
+                                            </button>
+                                            ${(this.currentUser.role === 'admin' || this.currentUser.role === 'staff') ? `
+                                            ${report.status === 'pending' ? `
+                                            <button class="btn btn-sm btn-warning" onclick="updateReportStatus(${report.id}, 'in-progress')" title="Start Working">
+                                                <i class="fas fa-play"></i>
+                                            </button>
+                                            ` : ''}
+                                            ${report.status === 'in-progress' ? `
+                                            <button class="btn btn-sm btn-success" onclick="updateReportStatus(${report.id}, 'resolved')" title="Mark Resolved">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            ` : ''}
+                                            ` : ''}
+                                            ${this.currentUser.role === 'admin' ? `
+                                            <button class="btn btn-sm btn-danger" onclick="deleteReport(${report.id})" title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                            ` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            loadMyReports() {
+                const content = document.getElementById('content');
+                const reports = Database.getReports().filter(r => r.authorId === this.currentUser.id);
+                
+                content.innerHTML = `
+                    <div class="animate__animated animate__fadeIn">
+                        <div class="content-header">
+                            <h1><i class="fas fa-file-alt"></i> My Reports</h1>
+                            <p>View and manage your submitted waste reports</p>
+                        </div>
+                        
+                        ${reports.length === 0 ? `
+                        <div class="card">
+                            <div class="empty-state">
+                                <i class="fas fa-inbox"></i>
+                                <h3>No Reports Yet</h3>
+                                <p>You haven't submitted any waste reports yet.</p>
+                                <button class="btn btn-primary" onclick="openReportModal()" style="margin-top: 20px;">
+                                    <i class="fas fa-plus"></i> Submit Your First Report
+                                </button>
+                            </div>
+                        </div>
+                        ` : `
+                        <div class="reports-grid">
+                            ${reports.map(report => `
+                                <div class="report-card">
+                                    <div class="report-header">
+                                        <span class="report-type type-${report.type}">${report.type}</span>
+                                        <span class="badge badge-${report.status}">${report.status}</span>
+                                    </div>
+                                    <div class="report-body">
+                                        <h3 class="report-title">${report.title}</h3>
+                                        <p class="report-description">${report.description}</p>
+                                        <div style="display: flex; align-items: center; gap: 8px; color: #777; font-size: 0.9rem; margin-top: 10px;">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <span>${report.location}</span>
+                                        </div>
+                                    </div>
+                                    <div class="report-footer">
+                                        <div style="color: var(--gray); font-size: 0.9rem;">
+                                            <i class="fas fa-calendar"></i> ${report.date}
+                                        </div>
+                                        <div class="report-actions">
+                                            <button class="btn btn-sm btn-info" onclick="viewReportDetails(${report.id})">
+                                                <i class="fas fa-eye"></i> Details
+                                            </button>
+                                            <button class="btn btn-sm btn-success" onclick="openCommentModal(${report.id})">
+                                                <i class="fas fa-comment"></i> ${report.comments}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        `}
+                    </div>
+                `;
+            }
+
+            loadUsers() {
+                if (this.currentUser.role !== 'admin') return;
+                
+                const content = document.getElementById('content');
+                const users = Database.getUsers();
+                
+                content.innerHTML = `
+                    <div class="animate__animated animate__fadeIn">
+                        <div class="content-header">
+                            <h1><i class="fas fa-users"></i> User Management</h1>
+                            <p>Manage system users and their permissions</p>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title"><i class="fas fa-user-friends"></i> All Users</h2>
+                                <span style="color: var(--gray);">${users.length} users</span>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Role</th>
+                                            <th>Joined</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${users.map(user => `
+                                            <tr>
+                                                <td>${user.id}</td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                                        <div style="width: 36px; height: 36px; border-radius: 50%; background: ${user.avatarColor}; 
+                                                            display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                                                            ${user.fullName.charAt(0)}
+                                                        </div>
+                                                        ${user.fullName}
+                                                    </div>
+                                                </td>
+                                                <td>${user.email}</td>
+                                                <td>
+                                                    <span class="badge" style="background: ${getRoleColor(user.role)}; color: white;">
+                                                        ${user.role}
+                                                    </span>
+                                                </td>
+                                                <td>${new Date(user.joinDate).toLocaleDateString()}</td>
+                                                <td>
+                                                    <div class="action-buttons">
+                                                        ${user.id !== this.currentUser.id ? `
+                                                        <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">
+                                                            <i class="fas fa-trash"></i> Delete
+                                                        </button>
+                                                        ` : `
+                                                        <span style="color: var(--gray); font-size: 0.9rem;">Current User</span>
+                                                        `}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // ==================== HELPER FUNCTIONS ====================
+        function getRoleColor(role) {
+            switch(role) {
+                case 'admin': return '#c01c28';
+                case 'staff': return '#1a5fb4';
+                case 'resident': return '#26a269';
+                default: return '#9a9996';
+            }
+        }
+
+        function getUserColor(userId) {
+            const users = Database.getUsers();
+            const user = users.find(u => u.id === userId);
+            return user ? user.avatarColor : '#9a9996';
+        }
+
+        function showToast(title, message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastTitle = document.getElementById('toastTitle');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastTitle.textContent = title;
+            toastMessage.textContent = message;
+            toast.className = `toast toast-${type}`;
+            
+            const icon = toast.querySelector('i');
+            icon.className = type === 'success' ? 'fas fa-check-circle' : 
+                            type === 'error' ? 'fas fa-exclamation-circle' : 
+                            'fas fa-info-circle';
+            
+            toast.style.display = 'flex';
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.style.display = 'none', 500);
+            }, 3000);
+        }
+
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.style.display = 'none';
+            });
+        }
+
+        function openReportModal() {
+            document.getElementById('reportModal').style.display = 'flex';
+        }
+
+        function openCommentModal(reportId = null) {
+            if (reportId) {
+                state.currentReportId = reportId;
+                loadComments(reportId);
+            }
+            document.getElementById('commentModal').style.display = 'flex';
+        }
+
+        function viewReportDetails(reportId) {
+            const reports = Database.getReports();
+            const report = reports.find(r => r.id === reportId);
+            
+            if (!report) {
+                showToast('Error', 'Report not found', 'error');
+                return;
+            }
+
+            const users = Database.getUsers();
+            const author = users.find(u => u.id === report.authorId);
+            
+            document.getElementById('reportDetailsContent').innerHTML = `
+                <div class="report-details">
+                    <h4 style="margin-bottom: 15px; color: var(--dark);">
+                        <i class="fas fa-info-circle"></i> Report Information
+                    </h4>
+                    
+                    <div style="margin-bottom: 25px;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                            <span class="report-type type-${report.type}" style="font-size: 14px;">
+                                ${report.type.toUpperCase()}
+                            </span>
+                            <span class="badge badge-${report.status}" style="font-size: 14px;">
+                                ${report.status.toUpperCase()}
+                            </span>
+                            <span class="badge" style="background: ${report.priority === 'critical' ? 'var(--danger)' : 
+                                report.priority === 'high' ? 'var(--warning)' : 
+                                report.priority === 'medium' ? 'var(--info)' : 'var(--gray)'}; color: white; font-size: 14px;">
+                                ${report.priority.toUpperCase()}
+                            </span>
+                        </div>
+                        
+                        <h3 style="margin-bottom: 15px; color: var(--dark);">${report.title}</h3>
+                        
+                        <div style="background: var(--light); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                            <h5 style="margin-bottom: 10px; color: var(--gray);">
+                                <i class="fas fa-map-marker-alt"></i> Location
+                            </h5>
+                            <p style="font-size: 1.1rem;">${report.location}</p>
+                        </div>
+                        
+                        <div style="background: var(--light); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                            <h5 style="margin-bottom: 10px; color: var(--gray);">
+                                <i class="fas fa-file-alt"></i> Description
+                            </h5>
+                            <p>${report.description}</p>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px;">
+                            <div style="background: var(--light); padding: 15px; border-radius: 12px;">
+                                <h5 style="margin-bottom: 5px; color: var(--gray); font-size: 0.9rem;">
+                                    <i class="fas fa-user"></i> Reported By
+                                </h5>
+                                <p style="font-weight: 600;">${report.authorName}</p>
+                            </div>
+                            <div style="background: var(--light); padding: 15px; border-radius: 12px;">
+                                <h5 style="margin-bottom: 5px; color: var(--gray); font-size: 0.9rem;">
+                                    <i class="fas fa-calendar"></i> Date Reported
+                                </h5>
+                                <p style="font-weight: 600;">${report.date}</p>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 15px; margin-top: 20px;">
+                            <div style="text-align: center; padding: 15px; background: var(--light); border-radius: 12px; flex: 1;">
+                                <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary);">${report.upvotes}</div>
+                                <div style="color: var(--gray); font-size: 0.9rem;">Upvotes</div>
+                            </div>
+                            <div style="text-align: center; padding: 15px; background: var(--light); border-radius: 12px; flex: 1;">
+                                <div style="font-size: 1.5rem; font-weight: bold; color: var(--info);">${report.comments}</div>
+                                <div style="color: var(--gray); font-size: 0.9rem;">Comments</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('reportDetailsModal').style.display = 'flex';
+        }
+
+        // ==================== AUTH FUNCTIONS ====================
+        function showLoginForm() {
+            document.getElementById('loginCard').style.display = 'block';
+            document.getElementById('registerCard').style.display = 'none';
+        }
+
+        function showRegisterForm() {
+            document.getElementById('loginCard').style.display = 'none';
+            document.getElementById('registerCard').style.display = 'block';
+        }
+
+        function login() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                showToast('Error', 'Please enter email and password', 'error');
+                return;
+            }
+            
+            const users = Database.getUsers();
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                // Remove password before storing
+                const { password, ...userWithoutPassword } = user;
+                Database.setCurrentUser(userWithoutPassword);
+                state.currentUser = userWithoutPassword;
+                state.init();
+                showToast('Success', 'Login successful!', 'success');
+            } else {
+                showToast('Error', 'Invalid email or password', 'error');
+            }
+        }
+
+        function register() {
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const role = document.getElementById('regRole').value;
+            
+            if (!name || !email || !password) {
+                showToast('Error', 'Please fill in all fields', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showToast('Error', 'Password must be at least 6 characters', 'error');
+                return;
+            }
+            
+            const users = Database.getUsers();
+            
+            // Check if email already exists
+            if (users.some(u => u.email === email)) {
+                showToast('Error', 'Email already registered', 'error');
+                return;
+            }
+            
+            // Generate random avatar color
+            const colors = ['#1a5fb4', '#26a269', '#e5a50a', '#c01c28', '#9141ac', '#1c71d8'];
+            const avatarColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            // Create new user
+            const newUser = {
+                id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
+                fullName: name,
+                email: email,
+                password: password,
+                role: role,
+                avatarColor: avatarColor,
+                joinDate: new Date().toISOString()
+            };
+            
+            users.push(newUser);
+            Database.saveUsers(users);
+            
+            // Auto-login after registration
+            const { password: _, ...userWithoutPassword } = newUser;
+            Database.setCurrentUser(userWithoutPassword);
+            state.currentUser = userWithoutPassword;
+            state.init();
+            
+            showToast('Success', 'Registration successful!', 'success');
+        }
+
+        function logout() {
+            Database.clearCurrentUser();
+            state.currentUser = null;
+            state.init();
+            showToast('Success', 'Logged out successfully', 'success');
+        }
+
+        // ==================== REPORT FUNCTIONS ====================
+        function submitReport() {
+            const title = document.getElementById('reportTitle').value.trim();
+            const type = document.getElementById('reportType').value;
+            const location = document.getElementById('reportLocation').value.trim();
+            const description = document.getElementById('reportDescription').value.trim();
+            const priority = document.getElementById('reportPriority').value;
+            
+            if (!title || !type || !location || !description) {
+                showToast('Error', 'Please fill in all required fields', 'error');
+                return;
+            }
+            
+            const reports = Database.getReports();
+            const newReport = {
+                id: reports.length > 0 ? Math.max(...reports.map(r => r.id)) + 1 : 1,
+                title: title,
+                description: description,
+                type: type,
+                location: location,
+                authorId: state.currentUser.id,
+                authorName: state.currentUser.fullName,
+                status: 'pending',
+                priority: priority,
+                date: new Date().toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                }),
+                upvotes: 0,
+                comments: 0
+            };
+            
+            reports.unshift(newReport);
+            Database.saveReports(reports);
+            
+            // Clear form
+            document.getElementById('reportForm').reset();
+            closeModal();
+            
+            // Reload content
+            state.loadDashboard();
+            
+            showToast('Success', 'Report submitted successfully!', 'success');
+        }
+
+        function upvoteReport(reportId) {
+            const reports = Database.getReports();
+            const reportIndex = reports.findIndex(r => r.id === reportId);
+            
+            if (reportIndex !== -1) {
+                reports[reportIndex].upvotes += 1;
+                Database.saveReports(reports);
+                
+                // Update UI
+                if (state.currentUser) {
+                    state.loadAllReports();
+                }
+                
+                showToast('Success', 'Report upvoted!', 'success');
+            }
+        }
+
+        function updateReportStatus(reportId, status) {
+            if (!confirm(`Are you sure you want to change this report status to "${status}"?`)) {
+                return;
+            }
+            
+            const reports = Database.getReports();
+            const reportIndex = reports.findIndex(r => r.id === reportId);
+            
+            if (reportIndex !== -1) {
+                reports[reportIndex].status = status;
+                Database.saveReports(reports);
+                
+                // Update UI
+                if (state.currentUser) {
+                    state.loadAllReports();
+                }
+                
+                showToast('Success', `Report marked as ${status}`, 'success');
+            }
+        }
+
+        function deleteReport(reportId) {
+            if (!confirm('Are you sure you want to delete this report?')) {
+                return;
+            }
+            
+            const reports = Database.getReports();
+            const filteredReports = reports.filter(r => r.id !== reportId);
+            
+            // Also delete associated comments
+            const comments = Database.getComments();
+            const filteredComments = comments.filter(c => c.reportId !== reportId);
+            
+            Database.saveReports(filteredReports);
+            Database.saveComments(filteredComments);
+            
+            // Update UI
+            if (state.currentUser) {
+                state.loadAllReports();
+            }
+            
+            showToast('Success', 'Report deleted successfully', 'success');
+        }
+
+        // ==================== COMMENT FUNCTIONS ====================
+        function loadComments(reportId) {
+            const comments = Database.getComments().filter(c => c.reportId === reportId);
+            const commentList = document.getElementById('commentList');
+            
+            if (comments.length === 0) {
+                commentList.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--gray);">
+                        <i class="fas fa-comment-slash" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                        <h4>No comments yet</h4>
+                        <p>Be the first to comment on this report</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort by timestamp (newest first)
+            comments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            commentList.innerHTML = comments.map(comment => `
+                <div class="comment-card">
+                    <div class="comment-header">
+                        <div class="comment-author">
+                            <div class="comment-avatar" style="background: ${getUserColor(comment.userId)};">
+                                ${comment.userName.charAt(0)}
+                            </div>
+                            <div>
+                                <div style="font-weight: 600;">${comment.userName}</div>
+                                <div class="comment-time">${new Date(comment.timestamp).toLocaleString()}</div>
+                            </div>
+                        </div>
+                        <div class="comment-actions">
+                            <button class="btn btn-sm" onclick="likeComment(${comment.id})">
+                                <i class="fas fa-thumbs-up"></i> ${comment.likes}
+                            </button>
+                            ${comment.userId === state.currentUser.id ? `
+                            <button class="btn btn-sm btn-danger" onclick="deleteComment(${comment.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                    <div class="comment-content">
+                        ${comment.content}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addComment() {
+            const commentText = document.getElementById('commentText').value.trim();
+            
+            if (!commentText) {
+                showToast('Error', 'Please enter a comment', 'error');
+                return;
+            }
+            
+            if (!state.currentReportId) {
+                showToast('Error', 'No report selected', 'error');
+                return;
+            }
+            
+            const comments = Database.getComments();
+            const reports = Database.getReports();
+            
+            // Add new comment
+            const newComment = {
+                id: comments.length > 0 ? Math.max(...comments.map(c => c.id)) + 1 : 1,
+                reportId: state.currentReportId,
+                userId: state.currentUser.id,
+                userName: state.currentUser.fullName,
+                content: commentText,
+                timestamp: new Date().toISOString(),
+                likes: 0
+            };
+            
+            comments.unshift(newComment);
+            Database.saveComments(comments);
+            
+            // Update report comment count
+            const reportIndex = reports.findIndex(r => r.id === state.currentReportId);
+            if (reportIndex !== -1) {
+                reports[reportIndex].comments += 1;
+                Database.saveReports(reports);
+            }
+            
+            // Clear comment box
+            document.getElementById('commentText').value = '';
+            
+            // Reload comments
+            loadComments(state.currentReportId);
+            
+            showToast('Success', 'Comment added!', 'success');
+        }
+
+        function likeComment(commentId) {
+            const comments = Database.getComments();
+            const commentIndex = comments.findIndex(c => c.id === commentId);
+            
+            if (commentIndex !== -1) {
+                comments[commentIndex].likes += 1;
+                Database.saveComments(comments);
+                loadComments(state.currentReportId);
+            }
+        }
+
+        function deleteComment(commentId) {
+            if (!confirm('Are you sure you want to delete this comment?')) {
+                return;
+            }
+            
+            const comments = Database.getComments();
+            const comment = comments.find(c => c.id === commentId);
+            
+            if (!comment) return;
+            
+            // Remove comment
+            const filteredComments = comments.filter(c => c.id !== commentId);
+            Database.saveComments(filteredComments);
+            
+            // Update report comment count
+            const reports = Database.getReports();
+            const reportIndex = reports.findIndex(r => r.id === comment.reportId);
+            if (reportIndex !== -1 && reports[reportIndex].comments > 0) {
+                reports[reportIndex].comments -= 1;
+                Database.saveReports(reports);
+            }
+            
+            // Reload comments
+            loadComments(state.currentReportId);
+            
+            showToast('Success', 'Comment deleted', 'success');
+        }
+
+        // ==================== USER FUNCTIONS ====================
+        function deleteUser(userId) {
+            if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+                return;
+            }
+            
+            const users = Database.getUsers();
+            const filteredUsers = users.filter(u => u.id !== userId);
+            
+            // Also delete user's reports
+            const reports = Database.getReports();
+            const filteredReports = reports.filter(r => r.authorId !== userId);
+            
+            // Also delete user's comments
+            const comments = Database.getComments();
+            const filteredComments = comments.filter(c => c.userId !== userId);
+            
+            Database.saveUsers(filteredUsers);
+            Database.saveReports(filteredReports);
+            Database.saveComments(filteredComments);
+            
+            // If current user is deleted, log them out
+            if (state.currentUser && state.currentUser.id === userId) {
+                logout();
+            } else {
+                state.loadUsers();
+            }
+            
+            showToast('Success', 'User deleted successfully', 'success');
+        }
+
+        // ==================== SEARCH AND FILTER FUNCTIONS ====================
+        function searchReports() {
+            const searchTerm = document.getElementById('reportSearch').value.toLowerCase();
+            const reportCards = document.querySelectorAll('.report-card');
+            
+            reportCards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(searchTerm) ? 'block' : 'none';
+            });
+        }
+
+        function filterReports() {
+            const typeFilter = document.getElementById('reportTypeFilter').value;
+            const statusFilter = document.getElementById('reportStatusFilter').value;
+            const reportCards = document.querySelectorAll('.report-card');
+            
+            reportCards.forEach(card => {
+                const typeBadge = card.querySelector('.report-type').textContent.toLowerCase();
+                const statusBadge = card.querySelector('.badge').textContent.toLowerCase().replace(' ', '-');
+                
+                const typeMatch = !typeFilter || typeBadge.includes(typeFilter);
+                const statusMatch = !statusFilter || statusBadge === statusFilter;
+                
+                card.style.display = typeMatch && statusMatch ? 'block' : 'none';
+            });
+        }
+
+        // ==================== INITIALIZE APPLICATION ====================
+        const state = new StateManager();
+
+        // Initialize sample data on first run
+        window.addEventListener('load', () => {
+            // Force initialization of sample data
+            Database.getUsers();
+            Database.getReports();
+            Database.getComments();
+        });
+    </script>
+</body>
+</html>
