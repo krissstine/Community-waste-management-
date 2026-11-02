@@ -260,9 +260,9 @@ function addComment(){const t=$('cText').value.trim();if(!t)return toast('Error'
 function likeComment(id){const c=comments(),x=c.find(y=>y.id===id);if(x){x.likes++;S('cwm_comments',c);loadComments()}}
 function delComment(id){if(!confirm('Delete this comment?'))return;const c=comments(),x=c.find(y=>y.id===id);if(!x)return;S('cwm_comments',c.filter(y=>y.id!==id));
  const r=reports(),p=r.find(y=>y.id===x.reportId);if(p&&p.comments>0){p.comments--;S('cwm_reports',r)}loadComments();refresh();toast('Success','Comment deleted')}
-
 document.addEventListener('click',e=>{if(e.target.classList.contains('modal'))closeModal()});
 boot();
+if (location.hash === '#register' && !cur) authSwitch(true);
 </script>
 </body>
 </html>

@@ -1,0 +1,20 @@
+/* Replaces the Vite default. Removes the white side strips. */
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  background: #070b14;
+}
+
+body {
+  display: block; /* Vite default is flex + centered, which squeezes the page */
+  min-width: 320px;
+}
+
+#root {
+  max-width: none;
+  text-align: left;
+}
