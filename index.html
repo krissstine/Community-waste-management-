@@ -81,7 +81,7 @@ a{color:var(--pl);font-weight:600;text-decoration:none}a:hover{text-decoration:u
 
 <div id="reportModal" class="modal"><div class="mc">
 <div class="mh"><h3><i class="fas fa-plus-circle"></i> Report Waste Issue</h3><button onclick="closeModal()">&times;</button></div>
-<div class="mbody"><form onsubmit="event.preventDefault();submitReport()" id="reportForm">
+<div class="mbody"><form onsubmit="event.preventDefault();submitReport()" oninput="saveDraft()" id="reportForm">
 <div class="fg"><label>Issue Title</label><input id="rTitle" class="fc" placeholder="e.g., Overflowing bins on Main Street" required></div>
 <div class="fg"><label>Waste Type</label><select id="rType" class="fc" required><option value="">Select waste type</option><option value="recyclable">Recyclable (plastic, paper, glass)</option><option value="hazardous">Hazardous (chemicals, batteries)</option><option value="organic">Organic (food, garden waste)</option><option value="electronic">Electronic Waste</option><option value="general">General Waste</option></select></div>
 <div class="fg"><label>Location</label><input id="rLoc" class="fc" placeholder="e.g., Near Central Park" required></div>
@@ -92,7 +92,7 @@ a{color:var(--pl);font-weight:600;text-decoration:none}a:hover{text-decoration:u
 
 <div id="commentModal" class="modal"><div class="mc">
 <div class="mh"><h3><i class="fas fa-comments"></i> Comments</h3><button onclick="closeModal()">&times;</button></div>
-<div class="mbody"><textarea id="cText" class="fc" rows="3" placeholder="Add your comment..."></textarea>
+<div class="mbody"><textarea id="cText" class="fc" rows="3" placeholder="Add your comment..." oninput="S('cwm_cdraft',{id:rid,t:this.value})"></textarea>
 <button class="btn b1" style="margin-top:10px" onclick="addComment()"><i class="fas fa-paper-plane"></i> Post Comment</button>
 <div id="cList"></div></div>
 <div class="mf"><button class="btn b2" onclick="closeModal()">Close</button></div></div></div>
@@ -107,7 +107,7 @@ a{color:var(--pl);font-weight:600;text-decoration:none}a:hover{text-decoration:u
 <script>
 const $=id=>document.getElementById(id);
 const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
-const S=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const S=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const now=()=>new Date().toISOString();
 const COLORS=['#1a5fb4','#26a269','#e5a50a','#c01c28','#9141ac','#1c71d8'];
@@ -127,11 +127,13 @@ function comments(){let c=L('cwm_comments',null);if(!c){c=[
 
 let cur=L('cwm_currentUser',null),rid=null,page='dash';
 const isStaff=()=>cur&&(cur.role==='admin'||cur.role==='staff');
+const cc=id=>comments().filter(c=>c.reportId===id).length;
 const colorOf=id=>(users().find(u=>u.id===id)||{}).avatarColor||'#64748b';
 
 function toast(t,m,err){const e=$('toast');$('tT').textContent=t;$('tM').textContent=m;e.className='toast'+(err?' err':'');e.querySelector('i').className=err?'fas fa-exclamation-circle':'fas fa-check-circle';e.style.display='flex';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',3000)}
 function closeModal(){document.querySelectorAll('.modal').forEach(m=>m.style.display='none')}
-function openReportModal(){$('reportModal').style.display='flex'}
+function saveDraft(){S('cwm_draft',{t:$('rTitle').value,ty:$('rType').value,lo:$('rLoc').value,d:$('rDesc').value,pr:$('rPri').value})}
+function openReportModal(){const d=L('cwm_draft',null);if(d){$('rTitle').value=d.t||'';$('rType').value=d.ty||'';$('rLoc').value=d.lo||'';$('rDesc').value=d.d||'';$('rPri').value=d.pr||'medium'}$('reportModal').style.display='flex'}
 
 function header(){
  if(!cur){$('nav').innerHTML='';$('ui').innerHTML='';return}
@@ -141,8 +143,8 @@ function header(){
   (isStaff()?a('all','go(\'all\')','list','All Reports'):'')+(cur.role==='admin'?a('users','go(\'users\')','users','Users'):'')+'</ul>';
  $('ui').innerHTML=`<div class="ub"><div class="av" style="background:${cur.avatarColor}">${esc(cur.fullName[0])}</div><div><div style="font-weight:600">${esc(cur.fullName)}</div><div style="font-size:.8rem;color:var(--mut)">${cur.role}</div></div></div><button class="btn bd sm" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>`}
 
-function go(p){page=p;header();({dash:dash,all:allReports,mine:myReports,users:userList})[p]()}
-function boot(){header();cur?go('dash'):authPage()}
+function go(p){page=p;S('cwm_page',p);header();({dash:dash,all:allReports,mine:myReports,users:userList})[p]()}
+function boot(){header();if(!cur)return authPage();const sp=L('cwm_page','dash');go((sp==='all'&&isStaff())||(sp==='users'&&cur.role==='admin')||(sp==='mine'&&cur.role==='resident')?sp:'dash')}
 
 function authPage(){$('content').innerHTML=`<div class="auth">
 <div class="card" id="loginCard"><h2>Welcome Back</h2><p class="sub">Sign in to your account</p>
@@ -172,7 +174,7 @@ function register(){const name=$('regName').value.trim(),email=$('regEmail').val
  const u=users();if(u.some(x=>x.email.toLowerCase()===email.toLowerCase()))return toast('Error','Email already registered',1);
  const n={id:Math.max(0,...u.map(x=>x.id))+1,fullName:name,email,password:pass,role,avatarColor:COLORS[Math.floor(Math.random()*COLORS.length)],joinDate:now()};
  u.push(n);S('cwm_users',u);const {password,...safe}=n;cur=safe;S('cwm_currentUser',cur);boot();toast('Success','Registration successful!')}
-function logout(){localStorage.removeItem('cwm_currentUser');cur=null;boot();toast('Success','Logged out successfully')}
+function logout(){localStorage.removeItem('cwm_currentUser');localStorage.removeItem('cwm_page');cur=null;boot();toast('Success','Logged out successfully')}
 
 function card(r,full){
  const pr=`<span class="tag p-${r.priority}">${r.priority}</span>`;
@@ -184,7 +186,7 @@ function card(r,full){
 <div class="rf"><div class="au"><div class="av" style="background:${colorOf(r.authorId)}">${esc(r.authorName[0])}</div><div><strong>${esc(r.authorName)}</strong></div></div>
 <div class="acts" onclick="event.stopPropagation()">
 <button class="btn sm" onclick="upvote(${r.id})"><i class="fas fa-thumbs-up"></i> ${r.upvotes}</button>
-<button class="btn sm bs" onclick="openComments(${r.id})"><i class="fas fa-comment"></i> ${r.comments}</button>
+<button class="btn sm bs" onclick="openComments(${r.id})"><i class="fas fa-comment"></i> ${cc(r.id)}</button>
 ${isStaff()&&r.status==='pending'?`<button class="btn sm bw" title="Start working" onclick="setStatus(${r.id},'in-progress')"><i class="fas fa-play"></i></button>`:''}
 ${isStaff()&&r.status==='in-progress'?`<button class="btn sm bs" title="Mark resolved" onclick="setStatus(${r.id},'resolved')"><i class="fas fa-check"></i></button>`:''}
 ${cur.role==='admin'?`<button class="btn sm bd" title="Delete" onclick="delReport(${r.id})"><i class="fas fa-trash"></i></button>`:''}
@@ -207,8 +209,8 @@ function allReports(){if(!isStaff())return go('dash');
 <div class="sf"><input id="q" class="fc" placeholder="Search reports..." oninput="filt()" style="flex:2">
 <select id="ft" class="fc" onchange="filt()"><option value="">All Types</option><option value="recyclable">Recyclable</option><option value="hazardous">Hazardous</option><option value="organic">Organic</option><option value="electronic">Electronic</option><option value="general">General</option></select>
 <select id="fs" class="fc" onchange="filt()"><option value="">All Status</option><option value="pending">Pending</option><option value="in-progress">In Progress</option><option value="resolved">Resolved</option></select></div>
-<div class="rgrid">${reports().map(x=>card(x,1)).join('')}</div>`}
-function filt(){const q=$('q').value.toLowerCase(),t=$('ft').value,s=$('fs').value;
+<div class="rgrid">${reports().map(x=>card(x,1)).join('')}</div>`;const f=L('cwm_filters',{});$('q').value=f.q||'';$('ft').value=f.t||'';$('fs').value=f.s||'';filt()}
+function filt(){const q=$('q').value.toLowerCase(),t=$('ft').value,s=$('fs').value;S('cwm_filters',{q:$('q').value,t,s});
  document.querySelectorAll('.rc').forEach(c=>c.style.display=(!q||c.dataset.text.includes(q))&&(!t||c.dataset.type===t)&&(!s||c.dataset.status===s)?'':'none')}
 
 function myReports(){const r=reports().filter(x=>x.authorId===cur.id);
@@ -226,7 +228,7 @@ function refresh(){go(page)}
 function submitReport(){const t=$('rTitle').value.trim(),ty=$('rType').value,lo=$('rLoc').value.trim(),d=$('rDesc').value.trim();
  if(!t||!ty||!lo||!d)return toast('Error','Please fill in all required fields',1);
  const r=reports();r.unshift({id:Math.max(0,...r.map(x=>x.id))+1,title:t,description:d,type:ty,location:lo,authorId:cur.id,authorName:cur.fullName,status:'pending',priority:$('rPri').value,date:new Date().toISOString().slice(0,10),upvotes:0,comments:0});
- S('cwm_reports',r);$('reportForm').reset();closeModal();go('dash');toast('Success','Report submitted successfully!')}
+ S('cwm_reports',r);localStorage.removeItem('cwm_draft');$('reportForm').reset();closeModal();go('dash');toast('Success','Report submitted successfully!')}
 function upvote(id){const r=reports(),x=r.find(y=>y.id===id);if(!x)return;x.upvotes++;S('cwm_reports',r);refresh();toast('Success','Report upvoted!')}
 function setStatus(id,s){if(!isStaff()||!confirm(`Change this report status to "${s}"?`))return;const r=reports(),x=r.find(y=>y.id===id);if(!x)return;x.status=s;S('cwm_reports',r);refresh();toast('Success','Report marked as '+s)}
 function delReport(id){if(cur.role!=='admin'||!confirm('Delete this report?'))return;S('cwm_reports',reports().filter(x=>x.id!==id));S('cwm_comments',comments().filter(c=>c.reportId!==id));refresh();toast('Success','Report deleted')}
@@ -239,19 +241,19 @@ function viewReport(id){const r=reports().find(x=>x.id===id);if(!r)return toast(
 <div class="box"><h5><i class="fas fa-map-marker-alt"></i> Location</h5>${esc(r.location)}</div>
 <div class="box"><h5><i class="fas fa-file-alt"></i> Description</h5>${esc(r.description)}</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px"><div class="box"><h5><i class="fas fa-user"></i> Reported By</h5><b>${esc(r.authorName)}</b></div><div class="box"><h5><i class="fas fa-calendar"></i> Date</h5><b>${esc(r.date)}</b></div>
-<div class="box" style="text-align:center"><b style="font-size:1.5rem;color:var(--pl)">${r.upvotes}</b><div style="color:var(--mut)">Upvotes</div></div><div class="box" style="text-align:center"><b style="font-size:1.5rem;color:var(--info)">${r.comments}</b><div style="color:var(--mut)">Comments</div></div></div>`;
+<div class="box" style="text-align:center"><b style="font-size:1.5rem;color:var(--pl)">${r.upvotes}</b><div style="color:var(--mut)">Upvotes</div></div><div class="box" style="text-align:center"><b style="font-size:1.5rem;color:var(--info)">${cc(r.id)}</b><div style="color:var(--mut)">Comments</div></div></div>`;
  $('detailModal').style.display='flex'}
 
-function openComments(id){if(id)rid=id;if(!rid)return;loadComments();closeModal();$('commentModal').style.display='flex'}
+function openComments(id){if(id)rid=id;if(!rid)return;loadComments();const cd=L('cwm_cdraft',{});$('cText').value=cd.id===rid?cd.t:'';closeModal();$('commentModal').style.display='flex'}
 function loadComments(){const c=comments().filter(x=>x.reportId===rid).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
  $('cList').innerHTML=c.length?c.map(x=>`<div class="cm"><div class="cm-h"><div class="au"><div class="av" style="background:${colorOf(x.userId)};width:30px;height:30px">${esc(x.userName[0])}</div><div><strong>${esc(x.userName)}</strong><div style="font-size:.78rem;color:var(--mut)">${new Date(x.timestamp).toLocaleString()}</div></div></div>
 <div class="acts"><button class="btn sm" onclick="likeComment(${x.id})"><i class="fas fa-thumbs-up"></i> ${x.likes}</button>${x.userId===cur.id||cur.role==='admin'?`<button class="btn sm bd" onclick="delComment(${x.id})"><i class="fas fa-trash"></i></button>`:''}</div></div>${esc(x.content)}</div>`).join(''):'<div class="empty"><i class="fas fa-comment-slash"></i><h4>No comments yet</h4><p>Be the first to comment</p></div>'}
 function addComment(){const t=$('cText').value.trim();if(!t)return toast('Error','Please enter a comment',1);
  const c=comments();c.unshift({id:Math.max(0,...c.map(x=>x.id))+1,reportId:rid,userId:cur.id,userName:cur.fullName,content:t,timestamp:now(),likes:0});S('cwm_comments',c);
- const r=reports(),x=r.find(y=>y.id===rid);if(x){x.comments++;S('cwm_reports',r)}$('cText').value='';loadComments();toast('Success','Comment added!')}
+ const r=reports(),x=r.find(y=>y.id===rid);if(x){x.comments++;S('cwm_reports',r)}$('cText').value='';localStorage.removeItem('cwm_cdraft');loadComments();refresh();toast('Success','Comment added!')}
 function likeComment(id){const c=comments(),x=c.find(y=>y.id===id);if(x){x.likes++;S('cwm_comments',c);loadComments()}}
 function delComment(id){if(!confirm('Delete this comment?'))return;const c=comments(),x=c.find(y=>y.id===id);if(!x)return;S('cwm_comments',c.filter(y=>y.id!==id));
- const r=reports(),p=r.find(y=>y.id===x.reportId);if(p&&p.comments>0){p.comments--;S('cwm_reports',r)}loadComments();toast('Success','Comment deleted')}
+ const r=reports(),p=r.find(y=>y.id===x.reportId);if(p&&p.comments>0){p.comments--;S('cwm_reports',r)}loadComments();refresh();toast('Success','Comment deleted')}
 
 document.addEventListener('click',e=>{if(e.target.classList.contains('modal'))closeModal()});
 boot();
